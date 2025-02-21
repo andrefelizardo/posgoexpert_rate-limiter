@@ -26,8 +26,6 @@ func NewRateLimiter(ipLimit, tokenLimit, blockTimeIP, blockTimeToken int, store 
 	}
 }
 
-// AllowRequest verifica se a requisição pode ser permitida.
-// Se um token for informado, usa a configuração do token; caso contrário, usa a do IP.
 func (r *RateLimiter) AllowRequest(ip, token string) (bool, error) {
 	var key string
 	var limit int

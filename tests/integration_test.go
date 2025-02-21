@@ -1,7 +1,7 @@
-package integration
+package tests
 
 import (
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -12,8 +12,8 @@ import (
 	"github.com/andrefelizardo/posgoexpert_rate-limiter/persistence"
 )
 
+//PARA RODAR ESSES TESTES SUBA O DOCKER PRIMEIRO
 func TestIntegrationRateLimiter(t *testing.T) {
-	// Carrega configurações via ambiente (ou use valores fixos para os testes)
 	ipLimit := 3
 	tokenLimit := 5
 	blockTimeIP := 60    // segs
@@ -41,7 +41,6 @@ func TestIntegrationRateLimiter(t *testing.T) {
 
 	client := server.Client()
 
-	// Testa limite para IP (sem token)
 	req, _ := http.NewRequest("GET", server.URL+"/test", nil)
 	req.RemoteAddr = "127.0.0.1:1234"
 	var lastResp *http.Response
@@ -52,13 +51,12 @@ func TestIntegrationRateLimiter(t *testing.T) {
 		}
 		lastResp = resp
 	}
-	body, _ := ioutil.ReadAll(lastResp.Body)
+	body, _ := io.ReadAll(lastResp.Body)
 	lastResp.Body.Close()
 	if lastResp.StatusCode != http.StatusTooManyRequests {
 		t.Errorf("Requisição excedente para IP: esperado 429, obtido %d com resposta: %s", lastResp.StatusCode, string(body))
 	}
 
-	// Testa limite para Token (o token se sobrepõe ao IP)
 	req, _ = http.NewRequest("GET", server.URL+"/test", nil)
 	req.Header.Set("API_KEY", "abc123")
 	req.RemoteAddr = "127.0.0.1:1234"
@@ -69,7 +67,7 @@ func TestIntegrationRateLimiter(t *testing.T) {
 		}
 		lastResp = resp
 	}
-	body, _ = ioutil.ReadAll(lastResp.Body)
+	body, _ = io.ReadAll(lastResp.Body)
 	lastResp.Body.Close()
 	if lastResp.StatusCode != http.StatusTooManyRequests {
 		t.Errorf("Requisição excedente para token: esperado 429, obtido %d com resposta: %s", lastResp.StatusCode, string(body))
