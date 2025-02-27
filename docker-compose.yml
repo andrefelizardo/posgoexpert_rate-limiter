@@ -9,3 +9,5 @@ services:
     build: .
     depends_on:
       - redis
+    environment:
+      - REDIS_ADDR=redis:6379

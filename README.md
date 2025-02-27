@@ -16,6 +16,8 @@ Configure o arquivo `.env` na raiz com as seguintes variáveis:
 
 ## Executando a Aplicação
 
+### Utilizando Docker Compose
+
 1. Construa e inicie os serviços:
    > docker-compose up --build
 2. Isso iniciará o Redis e a aplicação.
